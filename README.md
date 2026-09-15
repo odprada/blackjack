@@ -1,7 +1,5 @@
 # Blackjack
 
-A Python implementation of Blackjack with support for splitting, doubling down, multiple hands, and dealer play.
-
 ## Rules
 
 ### Cards
