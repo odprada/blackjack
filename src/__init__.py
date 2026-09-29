@@ -1,4 +1,2 @@
-from .assets import (
-    Card,
-    Hand,
-)
+from .card import Card
+from .hand import Hand
