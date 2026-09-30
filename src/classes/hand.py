@@ -22,9 +22,23 @@ class Hand:
     def is_blackjack(self) -> bool:
         return self.card_number == 2 and self.value == 21
 
+    #evaluate function provided by Claude
+    def _evaluate(self) -> tuple[int, bool]:
+        total = sum(c.cardvalue for c in self.cards)
+        soft_aces = sum(1 for c in self.cards if c.rank == 'A')
+        while total > 21 and soft_aces > 0:
+            total -= 10
+            soft_aces -= 1
+        return total, soft_aces > 0
+
     @property
     def value(self) -> int:
-        return sum(x.cardvalue for x in self.cards)
+        return self._evaluate()[0]
+
+    @property
+    def is_soft(self) -> bool:
+        return self._evaluate()[1]
+
     
     def __post_init__(self) -> None:
         if self.card_number == 0:
