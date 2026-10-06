@@ -15,6 +15,7 @@ class Card:
         card_value: The actual value of the card, obtained with a method using the rank.
 
     The value of A is set to 11, and cases when its value has to be 1 are handled through the Hand class.
+
     """
 
     rank: str

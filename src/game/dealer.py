@@ -3,6 +3,7 @@ from ..classes.hand import Hand
 
 deck = Deck()
 
+
 def dealer_play(deck: Deck) -> Hand:
     """Dealer stands on 17"""
     hand = Hand([deck.draw(), deck.draw()])
