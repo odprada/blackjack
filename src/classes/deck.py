@@ -7,7 +7,7 @@ class Deck:
     cards: List of cards contained in the deck, initially a standard 52-card deck.
 
     Methods:
-    draw: Shows a card and removes it from the deck.
+    draw: Shows the top card (last element from the card list) and removes it from the deck.
 
     """
 

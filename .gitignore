@@ -1,0 +1,20 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtualenvs
+.venv/
+venv/
+env/
+
+# OS junk
+.DS_Store
+
+# Secrets / env files
+.env
+*.env
+.venv312
+*.venv312
+.venv
+*.venv
