@@ -16,8 +16,8 @@ class Round:
         player_stood: Whether the player has ended their turn.
 
     Properties:
-        player_bust: Indicates hether the player's hand is over 21.
-        is_over: Indicates hether the round has ended.
+        player_bust: Indicates whether the player's hand is over 21.
+        is_over: Indicates whether the round has ended.
         outcome: Indicates who won, or None while the round is still going.
 
     The dealer stands on all 17s (as opposed to hitting on soft 17s like in some rulesets).
