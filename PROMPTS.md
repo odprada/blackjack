@@ -12,3 +12,6 @@ def _evaluate(self) -> tuple[int, bool]:
             total -= 10
             soft_aces -= 1
         return total, soft_aces > 0
+
+        
+### 2. Tests provided by Claude.
