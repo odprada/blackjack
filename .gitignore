@@ -18,3 +18,9 @@ env/
 *.venv312
 .venv
 *.venv
+
+# VS Code
+.vscode/
+
+# pycode
+.pytest_cache/
