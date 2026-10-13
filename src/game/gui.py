@@ -1,7 +1,7 @@
 import pygame
 
 pygame.init()
-screen = pygame.display.set_mode((720, 1280))
+screen = pygame.display.set_mode((360, 640))
 clock = pygame.time.Clock()
 running = True
 
