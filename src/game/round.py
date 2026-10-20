@@ -68,7 +68,7 @@ class Round:
             return OUTCOMES["player_win"]
         if player.value < dealer.value:
             return OUTCOMES["dealer_win"]
-        return "tie"
+        return OUTCOMES["tie"]
 
     def hit(self) -> None:
         if self.is_over:
