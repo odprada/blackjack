@@ -3,6 +3,12 @@ from dataclasses import dataclass, field
 from ..classes.deck import Deck
 from ..classes.hand import Hand
 
+OUTCOMES = {
+    "player_win": "You win!",
+    "player_blackjack": "Blackjack!",
+    "dealer_win": "Dealer wins",
+    "tie": "Tie",
+}
 
 @dataclass
 class Round:
@@ -18,7 +24,7 @@ class Round:
     Properties:
         player_bust: Indicates whether the player's hand is over 21.
         is_over: Indicates whether the round has ended.
-        outcome: Indicates who won, or None while the round is still going.
+        outcome: Indicates who won through a string, or None while the round is still going.
 
     The dealer stands on all 17s (as opposed to hitting on soft 17s like in some rulesets).
     """
@@ -54,14 +60,14 @@ class Round:
  
         if player.is_blackjack or dealer.is_blackjack:
             if player.is_blackjack and dealer.is_blackjack:
-                return "tie"
-            return "player_blackjack" if player.is_blackjack else "dealer_win"
+                return OUTCOMES["tie"]
+            return OUTCOMES["player_blackjack"] if player.is_blackjack else OUTCOMES["dealer_win"]
         if self.player_bust:
-            return "dealer_win"
+            return OUTCOMES["dealer_win"]
         if dealer.value > 21 or player.value > dealer.value:
-            return "player_win"
+            return OUTCOMES["player_win"]
         if player.value < dealer.value:
-            return "dealer_win"
+            return OUTCOMES["dealer_win"]
         return "tie"
 
     def hit(self) -> None:

@@ -3,6 +3,31 @@ import pygame
 from ..classes.deck import Deck
 from .round import Round
 
+WINDOW_SIZE = (520, 370)
+CAPTION = "blackjack"
+FPS = 30
+
+FONT_NAMES = "menlo,consolas,dejavusansmono,couriernew"
+FONT_SIZE = 20
+
+BACKGROUND = (30, 30, 30)
+TEXT_COLOR = (230, 230, 230)
+BUTTON_COLOR = (80, 80, 80)
+BUTTON_TEXT_COLOR = (255, 255, 255)
+BUTTON_RADIUS = 8
+
+TEXT_X = 20
+TEXT_Y = 20
+LINE_HEIGHT = 32
+
+BUTTONS = {
+    "hit": pygame.Rect(20, 300, 150, 50),
+    "stand": pygame.Rect(185, 300, 150, 50),
+    "new": pygame.Rect(350, 300, 150, 50),
+}
+LABELS = {"hit": "Hit (H)", "stand": "Stand (S)", "new": "New (N)"}
+KEYS = {pygame.K_h: "hit", pygame.K_s: "stand", pygame.K_n: "new"}
+
 
 def show(hand) -> str:
     cards = " ".join(f"{card.rank}{card.suit}" for card in hand.cards)
@@ -17,18 +42,10 @@ def new_round() -> Round:
 
 def main() -> None:
     pygame.init()
-    screen = pygame.display.set_mode((520, 370))
-    pygame.display.set_caption("blackjack")
-    font = pygame.font.SysFont("menlo,consolas,dejavusansmono,couriernew", 22)
+    screen = pygame.display.set_mode(WINDOW_SIZE)
+    pygame.display.set_caption(CAPTION)
+    font = pygame.font.SysFont(FONT_NAMES, FONT_SIZE)
     clock = pygame.time.Clock()
-
-    buttons = {
-        "hit": pygame.Rect(20, 300, 150, 50),
-        "stand": pygame.Rect(185, 300, 150, 50),
-        "new": pygame.Rect(350, 300, 150, 50),
-    }
-    labels = {"hit": "Hit (H)", "stand": "Stand (S)", "new": "New (N)"}
-    keys = {pygame.K_h: "hit", pygame.K_s: "stand", pygame.K_n: "new"}
 
     game_round = new_round()
     running = True
@@ -39,11 +56,11 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                for name, rect in buttons.items():
+                for name, rect in BUTTONS.items():
                     if rect.collidepoint(event.pos):
                         action = name
             elif event.type == pygame.KEYDOWN:
-                action = keys.get(event.key)
+                action = KEYS.get(event.key)
 
         if action == "hit":
             game_round.hit()
@@ -63,16 +80,16 @@ def main() -> None:
             f"cards in deck: {len(game_round.deck)}",
         ]
 
-        screen.fill((30, 30, 30))
+        screen.fill(BACKGROUND)
         for i, line in enumerate(lines):
-            screen.blit(font.render(line, True, (230, 230, 230)), (20, 20 + i * 32))
-        for name, rect in buttons.items():
-            pygame.draw.rect(screen, (80, 80, 80), rect, border_radius=8)
-            text = font.render(labels[name], True, (255, 255, 255))
+            screen.blit(font.render(line, True, TEXT_COLOR), (TEXT_X, TEXT_Y + i * LINE_HEIGHT))
+        for name, rect in BUTTONS.items():
+            pygame.draw.rect(screen, BUTTON_COLOR, rect, border_radius=BUTTON_RADIUS)
+            text = font.render(LABELS[name], True, BUTTON_TEXT_COLOR)
             screen.blit(text, text.get_rect(center=rect.center))
 
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(FPS)
 
     pygame.quit()
 

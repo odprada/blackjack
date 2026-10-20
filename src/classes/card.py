@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 RANKS = ('2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A')
+FACE_RANKS = ('J', 'Q', 'K')
 SUITS = ("♠", "♥", "♦", "♣")
 
 
@@ -23,7 +24,7 @@ class Card:
 
     @property
     def card_value(self) -> int:
-        if self.rank in ('J', 'Q', 'K'):
+        if self.rank in FACE_RANKS:
             return 10
         elif self.rank == 'A':
             return 11

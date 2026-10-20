@@ -29,8 +29,8 @@ class Hand:
 
     # evaluate function provided by Claude
     def _evaluate(self) -> tuple[int, bool]:
-        total = sum(c.card_value for c in self.cards)
-        soft_aces = sum(1 for c in self.cards if c.rank == 'A')
+        total = sum(card.card_value for card in self.cards)
+        soft_aces = sum(1 for card in self.cards if card.rank == 'A')
         while total > 21 and soft_aces > 0:
             total -= 10
             soft_aces -= 1
