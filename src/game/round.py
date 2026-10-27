@@ -10,6 +10,9 @@ OUTCOMES = {
     "tie": "Tie",
 }
 
+stand_value = 17
+bust_value = 21
+
 @dataclass
 class Round:
     """
@@ -40,7 +43,7 @@ class Round:
 
     @property
     def player_bust(self) -> bool:
-        return self.player_hand.value > 21
+        return self.player_hand.value > bust_value
 
     @property
     def is_over(self) -> bool:
@@ -79,5 +82,5 @@ class Round:
         if self.is_over:
             return
         self.player_stood = True
-        while self.dealer_hand.value < 17:
+        while self.dealer_hand.value < stand_value:
             self.dealer_hand.add_card(self.deck.draw())

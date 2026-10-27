@@ -8,7 +8,7 @@ CAPTION = "blackjack"
 FPS = 30
 
 FONT_NAMES = "menlo,consolas,dejavusansmono,couriernew"
-FONT_SIZE = 20
+FONT_SIZE = 18
 
 BACKGROUND = (30, 30, 30)
 TEXT_COLOR = (230, 230, 230)
