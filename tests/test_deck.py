@@ -5,8 +5,7 @@ import pytest
 from src.classes.card import RANKS, SUITS, Card
 from src.classes.deck import Deck
 
-
-def shuffled(seed: int | None) -> Deck:
+def shuffled(seed):
     deck = Deck(seed=seed)
     deck.shuffle()
     return deck

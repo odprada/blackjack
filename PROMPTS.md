@@ -20,4 +20,4 @@ def _evaluate(self) -> tuple[int, bool]:
 
 ### 3. Fixing constants (by Claude).
 
-* I asked Claude to take all constants out of the code so that they sit at module level.
+* I asked Claude to take all constants out of the main code so that they sit at module level.

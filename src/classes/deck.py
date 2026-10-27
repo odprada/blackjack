@@ -5,7 +5,8 @@ class Deck:
     """
     Attributes
     cards: List of cards contained in the deck, initially a standard 52-card deck.
-    rng: Seed for the random module.
+    seed: Seed for the random module.
+    rng: The deck's own random number generator.
 
     Methods:
     draw: Shows the top card (last element from the card list) and removes it from the deck.
@@ -15,6 +16,7 @@ class Deck:
 
     def __init__(self, seed=None) -> None:
         self.cards = [Card(rank, suit) for suit in SUITS for rank in RANKS]
+        self.seed =seed
         self.rng = random.Random(seed)
 
     def __len__(self) -> int:
@@ -27,4 +29,4 @@ class Deck:
 
 
     def shuffle(self) -> None:
-        random.shuffle(self.cards)
+        self.rng.shuffle(self.cards)
