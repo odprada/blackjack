@@ -1,4 +1,4 @@
-## Prompts
+## Useful prompts
 
 ### 1. Ace value handling (provided by Claude)
 
@@ -21,3 +21,10 @@ def _evaluate(self) -> tuple[int, bool]:
 ### 3. Fixing constants (by Claude).
 
 * I asked Claude to take all constants out of the main code so that they sit at module level.
+
+
+## Bad prompts
+
+### 1. Round and Seat classes.
+
+* I asked ChatGPT to split the Round and Seat classes (previously both contained in the Round.py file) into two different files. It did split the classes, but it also modified the code without being asked to.

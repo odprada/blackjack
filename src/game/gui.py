@@ -7,7 +7,6 @@ import pygame
 
 from ..classes.deck import Deck
 from .round import MAX_PLAYERS, OUTCOMES, Round
-from .seat import Seat
 
 DESIGN_W, DESIGN_H = 1440, 800
 
@@ -31,13 +30,13 @@ PATHS = {
 CAPTION = "blackjack"
 FPS = 60
 
-FONT_NAMES = "menlo,consolas,dejavusansmono,couriernew"
+FONT_NAMES = "georgia,dejavuserif,timesnewroman"
 
-TEXT_COLOR = (230, 230, 230)
-GOLD = (240, 200, 80)
-GREEN = (120, 220, 130)
-RED = (235, 110, 100)
-GREY = (190, 190, 190)
+TEXT_COLOR = (244, 237, 218)
+GOLD = (224, 184, 98)
+GREEN = (132, 205, 145)
+RED = (218, 112, 104)
+GREY = (177, 171, 153)
 OUTCOME_COLORS = {
     OUTCOMES["player_win"]: GREEN,
     OUTCOMES["player_blackjack"]: GOLD,
@@ -45,13 +44,18 @@ OUTCOME_COLORS = {
     OUTCOMES["tie"]: GREY,
 }
 
-BUTTON_COLOR = (80, 80, 80)
-BUTTON_HOVER = (105, 105, 105)
-BUTTON_PRESSED = (60, 60, 60)
-BUTTON_DISABLED = (52, 52, 52)
-BUTTON_SHADOW = (20, 20, 20)
-BUTTON_TEXT_COLOR = (255, 255, 255)
-BUTTON_TEXT_DISABLED = (120, 120, 120)
+BUTTON_PALETTES = {
+    "hit": ((24, 91, 61), (37, 125, 82), (14, 61, 43)),
+    "stand": ((111, 35, 39), (151, 48, 51), (76, 24, 29)),
+    "new": ((111, 83, 35), (151, 115, 52), (75, 55, 27)),
+    "menu": ((31, 54, 49), (48, 78, 67), (20, 38, 34)),
+    "default": ((25, 91, 62), (39, 124, 83), (15, 61, 43)),
+}
+BUTTON_DISABLED = (48, 57, 49)
+BUTTON_SHADOW = (10, 20, 15)
+BUTTON_TEXT_COLOR = (250, 241, 218)
+BUTTON_TEXT_DISABLED = (133, 137, 121)
+BUTTON_GOLD = (202, 164, 91)
 
 DEAL_MS = 260
 DEAL_STAGGER_MS = 140
@@ -164,16 +168,37 @@ class Button:
         L = self.layout
         hover = enabled and self.rect.collidepoint(mouse_pos)
         pressed = hover and mouse_down
+        action = self.action.split(":", 1)[0]
+        base, highlight, shade = BUTTON_PALETTES.get(action, BUTTON_PALETTES["default"])
         if not enabled:
-            color, text_color = BUTTON_DISABLED, BUTTON_TEXT_DISABLED
+            base = BUTTON_DISABLED
+            highlight = (62, 70, 59)
+            shade = (34, 42, 35)
+            text_color = BUTTON_TEXT_DISABLED
         else:
-            color = BUTTON_PRESSED if pressed else BUTTON_HOVER if hover else BUTTON_COLOR
             text_color = BUTTON_TEXT_COLOR
+            if hover:
+                base = tuple(min(255, c + 12) for c in base)
+                highlight = tuple(min(255, c + 12) for c in highlight)
 
-        pygame.draw.rect(screen, BUTTON_SHADOW, self.rect.move(0, L.button_depth),
-                         border_radius=L.button_radius)
         face = self.rect.move(0, L.button_press if pressed else 0)
-        pygame.draw.rect(screen, color, face, border_radius=L.button_radius)
+        shadow = self.rect.move(0, L.button_depth)
+        pygame.draw.rect(screen, BUTTON_SHADOW, shadow, border_radius=L.button_radius + 3)
+        pygame.draw.rect(screen, BUTTON_GOLD, face.inflate(3, 3), border_radius=L.button_radius + 3)
+        pygame.draw.rect(screen, shade, face, border_radius=L.button_radius)
+
+        # A restrained vertical sheen gives the buttons depth without a flat gray fill.
+        inner = face.inflate(-4, -4)
+        if inner.width > 0 and inner.height > 0:
+            gradient = pygame.Surface(inner.size, pygame.SRCALPHA)
+            for y in range(inner.height):
+                t = y / max(1, inner.height - 1)
+                color = tuple(round(highlight[i] * (1 - t) + base[i] * t) for i in range(3))
+                pygame.draw.line(gradient, (*color, 255), (0, y), (inner.width, y))
+            screen.blit(gradient, inner.topleft)
+            pygame.draw.rect(screen, tuple(min(255, c + 22) for c in highlight),
+                             inner, width=1, border_radius=max(2, L.button_radius - 3))
+
         text = font.render(self.label, True, text_color)
         screen.blit(text, text.get_rect(center=face.center))
 
@@ -332,10 +357,15 @@ class Game:
     def _draw_panel(self, screen, rect, active: bool) -> None:
         L = self.L
         surface = pygame.Surface(rect.size, pygame.SRCALPHA)
-        pygame.draw.rect(surface, (0, 0, 0, 80), surface.get_rect(), border_radius=L.panel_radius)
+        pygame.draw.rect(surface, (5, 19, 14, 105), surface.get_rect(), border_radius=L.panel_radius)
+        border = GOLD if active else (142, 119, 76)
+        pygame.draw.rect(surface, (*border, 225 if active else 125), surface.get_rect(),
+                         width=max(1, L.panel_border if active else 1),
+                         border_radius=L.panel_radius)
         if active:
-            pygame.draw.rect(surface, GOLD, surface.get_rect(), width=L.panel_border,
-                             border_radius=L.panel_radius)
+            inner = surface.get_rect().inflate(-L.panel_border * 4, -L.panel_border * 4)
+            pygame.draw.rect(surface, (224, 184, 98, 55), inner, width=1,
+                             border_radius=max(2, L.panel_radius - 3))
         screen.blit(surface, rect.topleft)
 
     def _draw_table(self, screen, now: int) -> None:
@@ -349,7 +379,7 @@ class Game:
 
         revealed = self.reveal_at is not None and now >= self.reveal_at + FLIP_MS
         label = "Dealer" + (f"   {hand_label(r.dealer_hand)}" if revealed else "")
-        self._text(screen, self.font, label, TEXT_COLOR, (L.center_x, L.dealer_label_y))
+        self._text(screen, self.font, label, GOLD, (L.center_x, L.dealer_label_y))
         flip_t = None if self.reveal_at is None else (now - self.reveal_at) / FLIP_MS
         self._draw_hand(screen, r.dealer_hand, L.dealer_y, L.center_x, L.dealer_max_width, now,
                         hide_second=self.reveal_at is None, flip_t=flip_t)
@@ -364,7 +394,7 @@ class Game:
             active = r.active_seat is seat
             self._draw_panel(screen, panel, active)
 
-            self._text(screen, self.font, seat.name, GOLD if active else TEXT_COLOR,
+            self._text(screen, self.font, seat.name, GOLD if active else (226, 218, 197),
                        (cx, panel.top + L.name_dy))
             cards_y = panel.top + L.cards_dy
             self._draw_hand(screen, seat.hand, cards_y, cx, panel_w - 2 * L.panel_pad, now)
