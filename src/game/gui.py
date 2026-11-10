@@ -7,6 +7,7 @@ import pygame
 
 from ..classes.deck import Deck
 from .round import MAX_PLAYERS, OUTCOMES, Round
+from .seat import Seat
 
 DESIGN_W, DESIGN_H = 1440, 800
 
