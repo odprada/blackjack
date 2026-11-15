@@ -86,12 +86,14 @@ class Round:
             self.dealer_turn = True
 
     def hit(self) -> None:
+        """Draws a card from the deck and advances to the next seat."""
         if self.dealer_turn:
             return
         self.active_seat.hand.add_card(self.deck.draw())
         self._advance()
 
     def stand(self) -> None:
+        """Stops the player'S turn without drawing additional cards and advances to the next seat."""
         if self.dealer_turn:
             return
         self.active_seat.stood = True

@@ -29,6 +29,7 @@ class Hand:
 
     # evaluate function provided by Claude
     def _evaluate(self) -> tuple[int, bool]:
+        """Determines the amount of soft aces (aces with value 11) and evaluates the value of the hand."""
         total = sum(card.card_value for card in self.cards)
         soft_aces = sum(1 for card in self.cards if card.rank == 'A')
         while total > 21 and soft_aces > 0:
@@ -49,4 +50,5 @@ class Hand:
             raise ValueError("Hand cannot be empty.")
 
     def add_card(self, new_card: Card) -> None:
+        """Adds the card to the hand."""
         self.cards.append(new_card)
