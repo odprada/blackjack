@@ -22,6 +22,10 @@ def _evaluate(self) -> tuple[int, bool]:
 
 * I asked Claude to take all constants out of the main code so that they sit at module level.
 
+### 4. Adding type hints.
+
+* I asked Gemini to add type hints to new functions.
+
 
 ## Bad prompts
 

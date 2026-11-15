@@ -14,7 +14,7 @@ class Deck:
 
     """
 
-    def __init__(self, seed=None) -> None:
+    def __init__(self, seed: int | None = None) -> None:
         self.cards = [Card(rank, suit) for suit in SUITS for rank in RANKS]
         self.seed =seed
         self.rng = random.Random(seed)

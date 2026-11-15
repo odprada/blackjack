@@ -6,12 +6,14 @@ from pathlib import Path
 import pygame
 
 from ..classes.deck import Deck
+from ..classes.hand import Hand
 from .round import MAX_PLAYERS, OUTCOMES, Round
+from .round import BUST_VALUE
 
 DESIGN_W, DESIGN_H = 1440, 800
 
 ASSETS = Path(__file__).resolve().parents[2] / "assets"
-MAT_PATH = ASSETS / "mat.jpg"  # menu background
+MAT_PATH = ASSETS / "mat.jpg"
 MAT_PATHS = {n: ASSETS / f"mat_{n}.jpg" for n in range(1, MAX_PLAYERS + 1)}
 CARDS_DIR = ASSETS / "cards"
 CARDBACK_PATH = CARDS_DIR / "back.png"
@@ -74,44 +76,44 @@ class Layout:
         def s(value: float) -> int:
             return max(1, round(value * scale))
 
-        self.scale = scale
+        self.scale: float = scale
         self.width, self.height = s(DESIGN_W), s(DESIGN_H)
-        self.window = (self.width, self.height)
-        self.center_x = self.width // 2
+        self.window: tuple[int, int] = (self.width, self.height)
+        self.center_x: int = self.width // 2
 
-        self.card_size = (s(90), s(126))
+        self.card_size: tuple[int, int] = (s(90), s(126))
         self.card_w, self.card_h = self.card_size
-        self.card_step = s(72)
-        self.card_radius = s(8)
+        self.card_step: int = s(72)
+        self.card_radius: int = s(8)
         self.shadow_dx, self.shadow_dy = s(3), s(5)
-        self.deck_pos = (self.width - s(150), s(40))
-        self.stack_offset = s(2)
+        self.deck_pos: tuple[int, int] = (self.width - s(150), s(40))
+        self.stack_offset: int = s(2)
 
-        self.dealer_label_y = s(36)
-        self.dealer_y = s(72)
-        self.dealer_max_width = s(900)
+        self.dealer_label_y: int = s(36)
+        self.dealer_y: int = s(72)
+        self.dealer_max_width: int = s(900)
 
-        self.panel_y = s(290)
-        self.panel_h = s(280)
-        self.panel_max_w = s(380)
-        self.panel_margin = s(24)
-        self.panel_pad = s(14)
-        self.panel_radius = s(14)
-        self.panel_border = s(3)
-        self.name_dy = s(26)
-        self.cards_dy = s(54)
-        self.total_dy = s(26)
-        self.result_dy = s(68)
+        self.panel_y: int = s(290)
+        self.panel_h: int = s(280)
+        self.panel_max_w: int = s(380)
+        self.panel_margin: int = s(24)
+        self.panel_pad: int = s(14)
+        self.panel_radius: int = s(14)
+        self.panel_border: int = s(3)
+        self.name_dy: int = s(26)
+        self.cards_dy: int = s(54)
+        self.total_dy: int = s(26)
+        self.result_dy: int = s(68)
 
-        self.status_y = s(612)
-        self.button_y = s(668)
+        self.status_y: int = s(612)
+        self.button_y: int = s(668)
         self.button_w, self.button_h, self.button_gap = s(170), s(58), s(24)
-        self.button_radius = s(8)
-        self.button_depth = s(4)
-        self.button_press = s(2)
+        self.button_radius: int = s(8)
+        self.button_depth: int = s(4)
+        self.button_press: int = s(2)
 
         self.menu_title_y, self.menu_sub_y, self.menu_hint_y = s(240), s(340), s(510)
-        self.menu_button_y = s(400)
+        self.menu_button_y: int = s(400)
         self.menu_button_w, self.menu_button_h, self.menu_button_gap = s(200), s(70), s(36)
 
         self.font_size, self.font_big_size, self.font_title_size = s(24), s(34), s(76)
@@ -130,17 +132,17 @@ def choose_scale() -> float:
     override = os.environ.get("BLACKJACK_SCALE")
     if override:
         return float(override)
-    info = pygame.display.Info()  # before set_mode this is the desktop size
+    info = pygame.display.Info()
     scale = min(info.current_w * 0.92 / DESIGN_W, info.current_h * 0.88 / DESIGN_H)
     return max(0.6, min(scale, 2.0))
 
 
-def load_image(path, size) -> pygame.Surface:
+def load_image(path: Path, size: tuple[int, int]) -> pygame.Surface:
     image = pygame.image.load(str(path)).convert_alpha()
     return pygame.transform.smoothscale(image, size)
 
 
-def load_mat(path, size) -> pygame.Surface:
+def load_mat(path: Path, size: tuple[int, int]) -> pygame.Surface:
     image = pygame.image.load(str(path)).convert()
     return pygame.transform.smoothscale(image, size)
 
@@ -149,22 +151,22 @@ def ease_out(t: float) -> float:
     return 1 - (1 - t) ** 3
 
 
-def hand_label(hand) -> str:
+def hand_label(hand: Hand) -> str:
     if hand.is_blackjack:
         return "Blackjack"
-    if hand.value > 21:
-        return f"{hand.value} - Bust"
+    if hand.value > BUST_VALUE:
+        return f"{hand.value} Bust"
     return f"{'Soft ' if hand.is_soft else ''}{hand.value}"
 
 
 class Button:
     def __init__(self, action: str, label: str, rect: pygame.Rect, layout: Layout) -> None:
-        self.action = action
-        self.label = label
-        self.rect = rect
-        self.layout = layout
+        self.action: str = action
+        self.label: str = label
+        self.rect: pygame.Rect = rect
+        self.layout: Layout = layout
 
-    def draw(self, screen, font, mouse_pos, mouse_down, enabled: bool) -> None:
+    def draw(self, screen: pygame.Surface, font: pygame.font.Font, mouse_pos: tuple[int, int], mouse_down: bool, enabled: bool) -> None:
         L = self.layout
         hover = enabled and self.rect.collidepoint(mouse_pos)
         pressed = hover and mouse_down
@@ -187,7 +189,6 @@ class Button:
         pygame.draw.rect(screen, BUTTON_GOLD, face.inflate(3, 3), border_radius=L.button_radius + 3)
         pygame.draw.rect(screen, shade, face, border_radius=L.button_radius)
 
-        # A restrained vertical sheen gives the buttons depth without a flat gray fill.
         inner = face.inflate(-4, -4)
         if inner.width > 0 and inner.height > 0:
             gradient = pygame.Surface(inner.size, pygame.SRCALPHA)
@@ -208,29 +209,29 @@ class Game:
 
     def __init__(self, layout: Layout) -> None:
         L = self.L = layout
-        self.mat = load_mat(MAT_PATH, L.window)
-        self.mats = {n: load_mat(path, L.window) for n, path in MAT_PATHS.items()}
-        self.fronts = {card: load_image(path, L.card_size) for card, path in PATHS.items()}
-        self.back = load_image(CARDBACK_PATH, L.card_size)
-        self.shadow = pygame.Surface(L.card_size, pygame.SRCALPHA)
+        self.mat: pygame.Surface = load_mat(MAT_PATH, L.window)
+        self.mats: dict[int, pygame.Surface] = {n: load_mat(path, L.window) for n, path in MAT_PATHS.items()}
+        self.fronts: dict[str, pygame.Surface] = {card: load_image(path, L.card_size) for card, path in PATHS.items()}
+        self.back: pygame.Surface = load_image(CARDBACK_PATH, L.card_size)
+        self.shadow: pygame.Surface = pygame.Surface(L.card_size, pygame.SRCALPHA)
         pygame.draw.rect(self.shadow, (0, 0, 0, 90), self.shadow.get_rect(), border_radius=L.card_radius)
 
-        self.font = pygame.font.SysFont(FONT_NAMES, L.font_size)
-        self.font_big = pygame.font.SysFont(FONT_NAMES, L.font_big_size, bold=True)
-        self.font_title = pygame.font.SysFont(FONT_NAMES, L.font_title_size, bold=True)
+        self.font: pygame.font.Font = pygame.font.SysFont(FONT_NAMES, L.font_size)
+        self.font_big: pygame.font.Font = pygame.font.SysFont(FONT_NAMES, L.font_big_size, bold=True)
+        self.font_title: pygame.font.Font = pygame.font.SysFont(FONT_NAMES, L.font_title_size, bold=True)
 
-        self.state = "menu"
-        self.num_players = 1
+        self.state: str = "menu"
+        self.num_players: int = 1
         self.round: Round | None = None
 
-        self.appear: dict = {}
-        self.settle_at = 0
+        self.appear: dict[object, int] = {}
+        self.settle_at: int = 0
         self.reveal_at: int | None = None
-        self.dealer_ready_at = 0
-        self.finished = False
+        self.dealer_ready_at: int = 0
+        self.finished: bool = False
 
         x0 = (L.width - (4 * L.button_w + 3 * L.button_gap)) // 2
-        self.table_buttons = [
+        self.table_buttons: list[Button] = [
             Button(action, label,
                    pygame.Rect(x0 + i * (L.button_w + L.button_gap), L.button_y, L.button_w, L.button_h), L)
             for i, (action, label) in enumerate(
@@ -239,26 +240,25 @@ class Game:
         ]
         mw, mh, mgap = L.menu_button_w, L.menu_button_h, L.menu_button_gap
         mx0 = (L.width - (MAX_PLAYERS * mw + (MAX_PLAYERS - 1) * mgap)) // 2
-        self.menu_buttons = [
+        self.menu_buttons: list[Button] = [
             Button(f"players:{n}", f"{n} player{'s' if n > 1 else ''}",
                    pygame.Rect(mx0 + (n - 1) * (mw + mgap), L.menu_button_y, mw, mh), L)
             for n in range(1, MAX_PLAYERS + 1)
         ]
-        self.menu_keys = {getattr(pygame, f"K_{n}"): f"players:{n}" for n in range(1, MAX_PLAYERS + 1)}
-        self.table_keys = {pygame.K_h: "hit", pygame.K_s: "stand", pygame.K_n: "new", pygame.K_m: "menu"}
-
+        self.menu_keys: dict[int, str] = {getattr(pygame, f"K_{n}"): f"players:{n}" for n in range(1, MAX_PLAYERS + 1)}
+        self.table_keys: dict[int, str] = {pygame.K_h: "hit", pygame.K_s: "stand", pygame.K_n: "new", pygame.K_m: "menu"}
 
     def buttons(self) -> list[Button]:
         return self.menu_buttons if self.state == "menu" else self.table_buttons
 
-    def key_actions(self) -> dict:
+    def key_actions(self) -> dict[int, str]:
         return self.menu_keys if self.state == "menu" else self.table_keys
 
     def enabled_actions(self) -> set[str]:
         if self.state == "menu":
             return {b.action for b in self.menu_buttons}
         actions = {"menu"}
-        if not self.round.dealer_turn:
+        if self.round and not self.round.dealer_turn:
             actions |= {"hit", "stand"}
         if self.finished:
             actions.add("new")
@@ -273,9 +273,9 @@ class Game:
             self.state = "menu"
         elif action == "new":
             self.new_round(now)
-        elif action == "hit":
+        elif action == "hit" and self.round:
             self.round.hit()
-        elif action == "stand":
+        elif action == "stand" and self.round:
             self.round.stand()
 
     def new_round(self, now: int) -> None:
@@ -295,7 +295,7 @@ class Game:
         self.finished = False
 
     def update(self, now: int) -> None:
-        if self.state != "table":
+        if self.state != "table" or not self.round:
             return
         r = self.round
         if r.dealer_turn and self.reveal_at is None and now >= self.settle_at:
@@ -307,8 +307,7 @@ class Game:
                 self.dealer_ready_at = now + DEALER_DRAW_MS
             self.finished = r.is_over and now >= self.reveal_at + FLIP_MS
 
-
-    def draw(self, screen, mouse_pos, mouse_down, now: int) -> None:
+    def draw(self, screen: pygame.Surface, mouse_pos: tuple[int, int], mouse_down: bool, now: int) -> None:
         if self.state == "menu":
             self._draw_menu(screen)
         else:
@@ -317,25 +316,25 @@ class Game:
         for button in self.buttons():
             button.draw(screen, self.font, mouse_pos, mouse_down, button.action in enabled)
 
-    def _text(self, screen, font, text, color, center) -> None:
+    def _text(self, screen: pygame.Surface, font: pygame.font.Font, text: str, color: tuple[int, int, int], center: tuple[int, int]) -> None:
         surface = font.render(text, True, color)
         screen.blit(surface, surface.get_rect(center=center))
 
-    def _draw_menu(self, screen) -> None:
+    def _draw_menu(self, screen: pygame.Surface) -> None:
         L = self.L
         screen.blit(self.mat, (0, 0))
         self._text(screen, self.font_title, "Blackjack", GOLD, (L.center_x, L.menu_title_y))
         self._text(screen, self.font, "How many players?", TEXT_COLOR, (L.center_x, L.menu_sub_y))
         self._text(screen, self.font, "Press 1-4 or click", GREY, (L.center_x, L.menu_hint_y))
 
-    def _draw_hand(self, screen, hand, y, center_x, max_width, now, hide_second=False, flip_t=None) -> None:
+    def _draw_hand(self, screen: pygame.Surface, hand: Hand, y: int, center_x: int, max_width: int, now: int, hide_second: bool = False, flip_t: float | None = None) -> None:
         L = self.L
         xs = L.hand_positions(len(hand.cards), center_x, max_width)
         for i, (card, x) in enumerate(zip(hand.cards, xs)):
             started = self.appear.setdefault(card, now)
             t = (now - started) / DEAL_MS
             if t < 0:
-                continue  # not dealt yet
+                continue
             e = ease_out(min(t, 1))
             px = L.deck_pos[0] + (x - L.deck_pos[0]) * e
             py = L.deck_pos[1] + (y - L.deck_pos[1]) * e
@@ -345,7 +344,6 @@ class Game:
             if i == 1 and hide_second:
                 image = self.back
             elif i == 1 and flip_t is not None and flip_t < 1:
-                # horizontal squash: back shrinks to a sliver, then the front grows out
                 image = self.back if flip_t < 0.5 else front
                 width = max(1, int(L.card_w * abs(1 - 2 * flip_t)))
                 image = pygame.transform.smoothscale(image, (width, L.card_h))
@@ -354,7 +352,7 @@ class Game:
             screen.blit(self.shadow, (px + L.shadow_dx, py + L.shadow_dy))
             screen.blit(image, (px, py))
 
-    def _draw_panel(self, screen, rect, active: bool) -> None:
+    def _draw_panel(self, screen: pygame.Surface, rect: pygame.Rect, active: bool) -> None:
         L = self.L
         surface = pygame.Surface(rect.size, pygame.SRCALPHA)
         pygame.draw.rect(surface, (5, 19, 14, 105), surface.get_rect(), border_radius=L.panel_radius)
@@ -368,9 +366,11 @@ class Game:
                              border_radius=max(2, L.panel_radius - 3))
         screen.blit(surface, rect.topleft)
 
-    def _draw_table(self, screen, now: int) -> None:
+    def _draw_table(self, screen: pygame.Surface, now: int) -> None:
         L = self.L
         r = self.round
+        if not r:
+            return
         screen.blit(self.mats[len(r.seats)], (0, 0))
 
         for k in (2, 1, 0):
@@ -402,21 +402,24 @@ class Game:
                        (cx, cards_y + L.card_h + L.total_dy))
             if self.finished:
                 result = r.outcome(seat)
-                self._text(screen, self.font_big, result, OUTCOME_COLORS[result],
-                           (cx, cards_y + L.card_h + L.result_dy))
+                if result:
+                    self._text(screen, self.font_big, result, OUTCOME_COLORS[result],
+                               (cx, cards_y + L.card_h + L.result_dy))
 
         if self.finished:
             status, color = "Round over - press N for a new round", TEXT_COLOR
         elif r.dealer_turn:
             status, color = "Dealer's turn", TEXT_COLOR
         else:
-            status, color = f"{r.active_seat.name}'s turn", GOLD
+            active_s = r.active_seat
+            active_name = active_s.name if active_s else "Player"
+            status, color = f"{active_name}'s turn", GOLD
         self._text(screen, self.font, status, color, (L.center_x, L.status_y))
 
 
 def main() -> None:
     if sys.platform == "win32":
-        try:  # report real pixels instead of an OS-scaled desktop size
+        try:
             ctypes.windll.user32.SetProcessDPIAware()
         except Exception:
             pass

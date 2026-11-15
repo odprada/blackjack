@@ -2,6 +2,7 @@ import pygame
 
 from ..classes.deck import Deck
 from .round import Round
+from ..classes.hand import Hand
 
 WINDOW_SIZE = (520, 370)
 CAPTION = "blackjack"
@@ -29,7 +30,7 @@ LABELS = {"hit": "Hit (H)", "stand": "Stand (S)", "new": "New (N)"}
 KEYS = {pygame.K_h: "hit", pygame.K_s: "stand", pygame.K_n: "new"}
 
 
-def show(hand) -> str:
+def show(hand: Hand) -> str:
     cards = " ".join(f"{card.rank}{card.suit}" for card in hand.cards)
     return f"{cards}   value {hand.value}" + ("  (soft)" if hand.is_soft else "")
 
