@@ -1,3 +1,7 @@
+## Tools
+
+* ChatGPT, Claude and Gemini were used for this project.
+
 ## Useful prompts
 
 ### 1. Ace value handling (provided by Claude)
@@ -32,3 +36,7 @@ def _evaluate(self) -> tuple[int, bool]:
 ### 1. Round and Seat classes.
 
 * I asked ChatGPT to split the Round and Seat classes (previously both contained in the Round.py file) into two different files. It did split the classes, but it also modified the code without being asked to.
+
+## AI usage volume
+
+* Around 50% of the code was AI-written/assisted, with most of the volume concentrated in the GUI (pygame).
