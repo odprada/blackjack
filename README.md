@@ -47,15 +47,6 @@ Every action also has an on-screen button that you can click.
 
 The window size adapts to your screen. To set the scale yourself, set the `BLACKJACK_SCALE` environment variable, for example `BLACKJACK_SCALE=1.2 python run_main.py`.
 
-### Running the tests
-
-```bash
-pip install pytest
-python -m pytest
-```
-
-Use `python -m pytest` and not plain `pytest`, so that the repository root is on the import path.
-
 ## Rules
 
 ### Cards
