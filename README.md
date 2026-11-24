@@ -1,5 +1,61 @@
 # Blackjack
 
+A Blackjack game with a graphical interface, built with Python and [pygame-ce](https://github.com/pygame-community/pygame-ce), the community edition of pygame. One to four players sit at the same table and play against the dealer.
+
+## Getting Started
+
+### Requirements
+
+* Python 3.10 or newer (developed and tested with Python 3.14)
+* pygame-ce (the community fork of pygame; it is still imported as `pygame`)
+
+### Installation
+
+```bash
+git clone https://github.com/odprada/blackjack.git
+cd blackjack
+
+python -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
+
+pip install pygame-ce
+```
+
+Install `pygame-ce` only. Having the original `pygame` installed next to it can cause conflicts, since both provide the same `pygame` module.
+
+### Running the game
+
+Run this from the repository root:
+
+```bash
+python run_main.py
+```
+
+The window opens on a menu. Choose how many players (1–4) will sit at the table, and the first round is dealt.
+
+### Controls
+
+| Key | Action |
+|-----|--------|
+| `1`–`4` | Choose the number of players (menu) |
+| `H` | Hit |
+| `S` | Stand |
+| `N` | New round (once the current round is over) |
+| `M` | Back to the menu |
+
+Every action also has an on-screen button that you can click.
+
+The window size adapts to your screen. To set the scale yourself, set the `BLACKJACK_SCALE` environment variable, for example `BLACKJACK_SCALE=1.2 python run_main.py`.
+
+### Running the tests
+
+```bash
+pip install pytest
+python -m pytest
+```
+
+Use `python -m pytest` and not plain `pytest`, so that the repository root is on the import path.
+
 ## Rules
 
 ### Cards
