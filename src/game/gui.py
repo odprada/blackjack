@@ -8,7 +8,7 @@ import pygame
 from ..classes.deck import Deck
 from ..classes.hand import Hand
 from .round import MAX_PLAYERS, OUTCOMES, Round
-from .round import BUST_VALUE
+from .round import TARGET
 
 DESIGN_W, DESIGN_H = 1440, 800
 
@@ -40,10 +40,10 @@ GREEN = (132, 205, 145)
 RED = (218, 112, 104)
 GREY = (177, 171, 153)
 OUTCOME_COLORS = {
-    OUTCOMES["player_win"]: GREEN,
-    OUTCOMES["player_blackjack"]: GOLD,
-    OUTCOMES["dealer_win"]: RED,
-    OUTCOMES["tie"]: GREY,
+    OUTCOMES["p_w"]: GREEN,
+    OUTCOMES["p_b"]: GOLD,
+    OUTCOMES["d_w"]: RED,
+    OUTCOMES["t"]: GREY,
 }
 
 BUTTON_PALETTES = {
@@ -154,7 +154,7 @@ def ease_out(t: float) -> float:
 def hand_label(hand: Hand) -> str:
     if hand.is_blackjack:
         return "Blackjack"
-    if hand.value > BUST_VALUE:
+    if hand.value > TARGET:
         return f"{hand.value} Bust"
     return f"{'Soft ' if hand.is_soft else ''}{hand.value}"
 

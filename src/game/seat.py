@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from ..classes.hand import Hand
-from round import TARGET
+
+TARGET = 21
 
 @dataclass
 class Seat:

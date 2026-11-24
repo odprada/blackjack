@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 
 from ..classes.deck import Deck
 from ..classes.hand import Hand
-from .seat import Seat
+from .seat import Seat, TARGET
 
 OUTCOMES = {
     "p_w": "You win!",
@@ -12,7 +12,6 @@ OUTCOMES = {
 }
 
 STAND_VALUE = 17
-TARGET = 21
 MAX_PLAYERS = 4
 
 
