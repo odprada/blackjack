@@ -1,8 +1,6 @@
 from dataclasses import dataclass
-
 from ..classes.hand import Hand
-
-BUST_VALUE = 21
+from round import TARGET
 
 @dataclass
 class Seat:
@@ -26,11 +24,11 @@ class Seat:
 
     @property
     def bust(self) -> bool:
-        return self.hand.value > BUST_VALUE
+        return self.hand.value > TARGET
 
     @property
     def done(self) -> bool:
-        return self.stood or self.bust or self.hand.value == BUST_VALUE
+        return self.stood or self.bust or self.hand.value == TARGET
 
     @property
     def live(self) -> bool:

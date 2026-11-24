@@ -5,14 +5,14 @@ from ..classes.hand import Hand
 from .seat import Seat
 
 OUTCOMES = {
-    "player_win": "You win!",
-    "player_blackjack": "Blackjack!",
-    "dealer_win": "Dealer wins",
-    "tie": "Tie",
+    "p_w": "You win!",
+    "p_b": "Blackjack!",
+    "d_w": "Dealer wins",
+    "t": "Tie",
 }
 
 STAND_VALUE = 17
-BUST_VALUE = 21
+TARGET = 21
 MAX_PLAYERS = 4
 
 
@@ -119,12 +119,13 @@ class Round:
 
         if player.is_blackjack or dealer.is_blackjack:
             if player.is_blackjack and dealer.is_blackjack:
-                return OUTCOMES["tie"]
-            return OUTCOMES["player_blackjack"] if player.is_blackjack else OUTCOMES["dealer_win"]
+                return OUTCOMES["t"]
+            return OUTCOMES["p_b"] if player.is_blackjack else OUTCOMES["d_w"]
         if seat.bust:
-            return OUTCOMES["dealer_win"]
-        if dealer.value > BUST_VALUE or player.value > dealer.value:
-            return OUTCOMES["player_win"]
+            return OUTCOMES["d_w"]
+        if dealer.value > TARGET or player.value > dealer.value:
+            return OUTCOMES["p_w"]
         if player.value < dealer.value:
-            return OUTCOMES["dealer_win"]
-        return OUTCOMES["tie"]
+            return OUTCOMES["d_w"]
+        return OUTCOMES["t"]
+    
