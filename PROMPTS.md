@@ -20,7 +20,7 @@ def _evaluate(self) -> tuple[int, bool]:
         
 ### 2. Tests (provided by Claude).
 
-* I asked Claude to provide tests for all classes using pytest.
+* I asked Claude to provide tests for all classes using pytest, which helped spotting edge cases that would have been hard for me to spot manually.
 
 ### 3. Fixing constants (by Claude).
 
